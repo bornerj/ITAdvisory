@@ -1,0 +1,19 @@
+.about-section{padding:8vw 12vw;display:grid;grid-template-columns:.8fr 1.2fr;gap:8vw;background:#202b36;color:#f5f2eb}
+.about-section .section-label{color:#f2a888}
+.about-section h2,.credibility-section h2{font:600 clamp(2.2rem,4.4vw,4.7rem)/1 var(--serif);letter-spacing:-.05em;margin:.6rem 0}
+.about-copy{max-width:660px;font-size:clamp(1.03rem,1.55vw,1.25rem);line-height:1.55;color:#d4dce1}
+.about-copy p{margin:0 0 1.25rem}
+.about-copy p:last-child{margin-bottom:0;color:#fff}
+.credibility-section{padding:8vw 12vw;background:#d8ddd9;display:grid;grid-template-columns:.8fr 1.2fr;gap:8vw}
+.credibility-section h2{max-width:530px}
+.credibility-grid{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--ink)}
+.credibility-grid article{display:grid;grid-template-columns:2.5rem 1fr;gap:.65rem;align-items:start;padding:1.25rem 1.1rem 1.25rem 0;border-bottom:1px solid var(--line)}
+.credibility-grid article:nth-child(odd){border-right:1px solid var(--line);padding-right:1.5rem}
+.credibility-grid article:nth-child(even){padding-left:1.5rem}
+.credibility-grid span{font:500 .68rem var(--mono);color:var(--signal)}
+.credibility-grid p{margin:0;font-size:.91rem;line-height:1.45}
+@media(max-width:760px){
+  .about-section,.credibility-section{padding:4rem 1.4rem;grid-template-columns:1fr;gap:2rem}
+  .credibility-grid{grid-template-columns:1fr}
+  .credibility-grid article,.credibility-grid article:nth-child(odd),.credibility-grid article:nth-child(even){padding:1.15rem 0;border-right:0}
+}
