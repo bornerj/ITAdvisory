@@ -47,11 +47,37 @@ closeContactButton.addEventListener('click', () => contactDialog.close());
 contactDialog.addEventListener('click', (event) => {
   if (event.target === contactDialog) contactDialog.close();
 });
-contactForm.addEventListener('submit', (event) => {
+contactForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!contactForm.checkValidity()) {
     contactForm.reportValidity();
     return;
   }
-  formStatus.textContent = 'Informações validadas. Para receber mensagens, conecte este formulário ao seu e-mail, CRM ou agenda antes de publicar.';
+
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const payload = Object.fromEntries(new FormData(contactForm).entries());
+
+  submitButton.disabled = true;
+  formStatus.textContent = 'Enviando...';
+
+  try {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      formStatus.textContent = data.error || 'Não foi possível enviar sua solicitação. Tente novamente.';
+      return;
+    }
+
+    formStatus.textContent = 'Solicitação enviada. Em breve retornarei o contato.';
+    contactForm.reset();
+  } catch (error) {
+    formStatus.textContent = 'Erro de conexão. Tente novamente em instantes.';
+  } finally {
+    submitButton.disabled = false;
+  }
 });
