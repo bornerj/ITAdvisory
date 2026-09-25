@@ -36,6 +36,16 @@ const openContactButtons = [...document.querySelectorAll('[data-open-contact]')]
 const closeContactButton = document.querySelector('[data-close-contact]');
 const contactForm = document.querySelector('#contact-form');
 const formStatus = document.querySelector('#form-status');
+const erpSelect = contactForm.querySelector('select[name="erp"]');
+const erpQualInput = contactForm.querySelector('input[name="erp-qual"]');
+
+function syncErpQual() {
+  const enabled = ['Sim', 'Em avaliação'].includes(erpSelect.value);
+  erpQualInput.disabled = !enabled;
+  if (!enabled) erpQualInput.value = '';
+}
+
+erpSelect.addEventListener('change', syncErpQual);
 
 function openContactDialog() {
   contactDialog.showModal();
@@ -75,6 +85,7 @@ contactForm.addEventListener('submit', async (event) => {
 
     formStatus.textContent = 'Solicitação enviada. Em breve retornarei o contato.';
     contactForm.reset();
+    syncErpQual();
   } catch (error) {
     formStatus.textContent = 'Erro de conexão. Tente novamente em instantes.';
   } finally {

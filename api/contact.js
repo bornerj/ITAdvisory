@@ -41,7 +41,7 @@ function buildEmailHtml(data) {
     ['Telefone / WhatsApp', data.telefone],
     ['Segmento', data.segmento],
     ['Principal preocupação', data.preocupacao],
-    ['Usa ERP', data.erp],
+    ['Usa ERP', data.erp === 'Sim' || data.erp === 'Em avaliação' ? `${data.erp} (${data['erp-qual'] || '—'})` : data.erp],
     ['Operação distribuída', data['operacao-distribuida']],
     ['IA interna', data['ia-interna']],
   ]
