@@ -41,14 +41,14 @@ function buildEmailHtml(data) {
     ['Telefone / WhatsApp', data.telefone],
     ['Segmento', data.segmento],
     ['Principal preocupação', data.preocupacao],
-    ['Usa ERP', data.erp === 'Sim' || data.erp === 'Em avaliação' ? `${data.erp} (${data['erp-qual'] || '—'})` : data.erp],
+    ['Usa ERP', data.erp === 'Sim' || data.erp === 'Em avaliação' ? `${data.erp} (${data['erp-qual'] || 'não informado'})` : data.erp],
     ['Operação distribuída', data['operacao-distribuida']],
     ['IA interna', data['ia-interna']],
   ]
     .map(([label, value]) => `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`)
     .join('');
 
-  const mensagem = escapeHtml(data.mensagem || '—').replace(/\n/g, '<br>');
+  const mensagem = escapeHtml(data.mensagem || 'não informado').replace(/\n/g, '<br>');
 
   return `
     <h2>Nova solicitação de conversa executiva</h2>
@@ -97,7 +97,7 @@ module.exports = async function handler(req, res) {
         },
         to: [{ email: process.env.CONTACT_TO_EMAIL || DEFAULT_TO_EMAIL }],
         replyTo: { email: body.email, name: body.nome },
-        subject: `Nova conversa executiva — ${body.empresa}`,
+        subject: `Nova conversa executiva, ${body.empresa}`,
         htmlContent: buildEmailHtml(body),
       }),
     });

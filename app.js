@@ -92,3 +92,65 @@ contactForm.addEventListener('submit', async (event) => {
     submitButton.disabled = false;
   }
 });
+
+const sfkVideo = document.getElementById('sfk-video');
+if (sfkVideo) {
+  const langTabs = document.querySelectorAll('[data-lang]');
+  langTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      langTabs.forEach((t) => t.setAttribute('aria-pressed', String(t === tab)));
+      sfkVideo.src = tab.dataset.src;
+      sfkVideo.load();
+      sfkVideo.play().catch(() => {});
+    });
+  });
+  // Ao terminar, volta ao início (poster) e para.
+  sfkVideo.addEventListener('ended', () => sfkVideo.load());
+}
+
+// Carrossel SFK — adaptado de "Adaptive Thumbnail Carousel" (Taluska, MIT): https://codepen.io/Taluska/pen/eYqmXpJ
+const sfkCarousel = document.querySelector('.sfk-carousel');
+if (sfkCarousel) {
+  const slider = sfkCarousel.querySelector('.sfk-slider');
+  const screen = sfkCarousel.querySelector('.sfk-screen');
+  const count = sfkCarousel.querySelector('.sfk-count');
+  const prevButton = sfkCarousel.querySelector('.sfk-btn.prev');
+  const nextButton = sfkCarousel.querySelector('.sfk-btn.next');
+  const slides = [...slider.children];
+  const sibling = (slide, dir) => (dir === 'prev' ? slide.previousElementSibling : slide.nextElementSibling);
+  const activeSlide = () => slider.querySelector('.sfk-slide.active');
+
+  function scrollToSlide(slide, behavior = 'smooth') {
+    slider.scrollTo({ left: slide.offsetLeft - slider.clientWidth / 2 + slide.offsetWidth / 2, behavior });
+  }
+
+  function update(slide, behavior) {
+    slides.forEach((s) => s.classList.toggle('active', s === slide));
+    const img = slide.querySelector('img').cloneNode(true);
+    img.loading = 'eager';
+    screen.replaceChildren(img);
+    count.textContent = `${String(slides.indexOf(slide) + 1).padStart(2, '0')} / ${slides.length}`;
+    scrollToSlide(slide, behavior);
+    prevButton.disabled = !sibling(slide, 'prev');
+    nextButton.disabled = !sibling(slide, 'next');
+  }
+
+  prevButton.addEventListener('click', () => { const s = sibling(activeSlide(), 'prev'); if (s) update(s); });
+  nextButton.addEventListener('click', () => { const s = sibling(activeSlide(), 'next'); if (s) update(s); });
+  slider.addEventListener('click', (event) => {
+    const slide = event.target.closest('.sfk-slide');
+    if (slide) update(slide);
+  });
+  sfkCarousel.setAttribute('tabindex', '0');
+  sfkCarousel.addEventListener('keydown', (event) => {
+    const current = activeSlide();
+    const target = { Home: slides[0], End: slides[slides.length - 1], ArrowLeft: sibling(current, 'prev'), ArrowRight: sibling(current, 'next') }[event.key];
+    if (target) { event.preventDefault(); update(target); }
+  });
+
+  update(slides[0], 'auto');
+  // A aba 05 começa oculta: reposiciona a faixa quando o carrossel passa a ser visível.
+  new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) scrollToSlide(activeSlide(), 'auto');
+  }).observe(sfkCarousel);
+}
